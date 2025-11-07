@@ -1,0 +1,61 @@
+#spring:
+#  application:
+#    name: material-inspection-service
+#  datasource:
+#    url: jdbc:mysql://localhost:3306/materialMasterServiceDb?createTableIfNotExists=true
+#    username: root
+#    password: 3306
+#  jpa:
+#    hibernate:
+#      ddl-auto: create
+#    properties:
+#      hibernate:
+#        show_sql: true
+#        format_sql: true
+#  output:
+#    ansi:
+#      enabled: always 
+#
+#  
+#    
+#    
+#server:
+#  port: 8020
+#  
+#password-validation: ^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!*()]).{8,}$
+
+
+spring:
+  application:
+    name: material-inspection-service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/material-inspection-management?currentSchema=mim
+    username: postgres
+    password: 8639054306
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        show_sql: true
+        format_sql: true
+
+  output:
+    ansi:
+      enabled: always
+
+server:
+  port: 8020
+
+password-validation: "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!*()]).{8,}$"
+
+jwt:
+  secret: ${JWT_SECRET:YXBs1WfPnt3hPEirCjnq6zGXBhp5naYUH/aVV9si5y4=}
+  validity-ms: ${JWT_VALIDITY_MS:3600000}
+
+cors:
+  max-age: 3600 # 1 hour in seconds

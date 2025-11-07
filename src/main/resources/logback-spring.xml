@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<property name="LOG_PATH"
+		value="C:\reddy\logs\materialInspLogs" />
+
+	<appender name="STD_OUT"
+		class="ch.qos.logback.core.ConsoleAppender">
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>
+				%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n
+			</Pattern>
+		</layout>
+	</appender>
+
+	<appender name="FILE_AUDIT"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_PATH}/material-insp-rest.log</file>
+		<encoder
+			class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<Pattern>
+				%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n
+			</Pattern>
+		</encoder>
+		
+<!--  	used for maintaining log files based on number means if log files reaches maximum, 
+        old one will be deleted and remaining files are adjusted with appropriate log file number	
+ 
+	  	<rollingPolicy
+			class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<fileNamePattern>${LOG_PATH}/material-insp-rest_%i.log
+			</fileNamePattern>
+		</rollingPolicy>
+-->
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_PATH}/material-insp-rest_%d{yyyy-MM-dd}.log
+			</fileNamePattern>
+		</rollingPolicy>
+
+		<triggeringPolicy
+			class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<maxFileSize>10MB</maxFileSize>
+		</triggeringPolicy>
+
+	</appender>
+
+
+	<!-- LOG everything at INFO level -->
+	<root level="info">
+		<appender-ref ref="STD_OUT" />
+		<appender-ref ref="FILE_AUDIT" />
+	</root>
+
+
+</configuration>
