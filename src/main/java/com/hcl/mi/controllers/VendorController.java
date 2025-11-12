@@ -50,23 +50,26 @@ public class VendorController {
 				.body(vendorService.getVendor(id)); 
 		
 	}
-
+ 
 	@GetMapping("/all")
 	public ResponseEntity<List<VendorDto>> getAllVendors() {  
 		
 		return ResponseEntity.status(HttpStatus.OK).body(vendorService.getAllVendor());
 	}
-
-	@PutMapping("/edit")
+ 
+	@PutMapping("/edit") 
 	public ResponseEntity<ResponseDto> editVendor(@Valid @RequestBody VendorDto vendorDto) {
+		log.info("inside editVendor(): {}", vendorDto);
 		vendorService.updateVendor(vendorDto); 
 		return  ResponseEntity
 				.status(HttpStatus.OK)
-				.body(new ResponseDto("200", "Vendor details are updated"));
-	}
-  
+				.body(new ResponseDto("200", "Vendor details updated Successfully"));
+	} 
+     
 	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<ResponseDto> deleteVendor(@PathVariable Integer id) {
+		
+		System.out.println("inside deleteVendor():");
 
 		vendorService.deleteVendor(id);
 		return  ResponseEntity

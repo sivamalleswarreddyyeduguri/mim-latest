@@ -15,9 +15,11 @@ public class PlantDto {
 	@NotBlank(message = "invalid plant name")
 	private String plantName;
 	
-	@NotBlank(message = "please provide valid location")
-	private String location;
-	
 	private boolean status = true;
 	
+	@NotBlank(message = "please provide valid state")
+	private String state;
+	
+	@NotBlank(message = "please provide valid city")
+	private String city;
 }

@@ -15,7 +15,8 @@ public interface VendorService {
 
 	void deleteVendor(Integer id);
 	
-	List<Vendor> getAllActiveVendor();
+	List<VendorDto> getAllActiveVendor();
 	
 	void updateVendor(VendorDto vendorDto);
 }
+ 

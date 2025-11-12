@@ -4,6 +4,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -16,6 +17,7 @@ import io.swagger.v3.oas.annotations.info.Info;
 
 @SpringBootApplication
 @EnableTransactionManagement
+@EnableJpaAuditing(auditorAwareRef = "auditAwareImpl")
 @OpenAPIDefinition(info = @Info(title = "Material Inspection Service", 
                                 description = "Capturing Inspection Actuals details.",
                                 contact = @Contact(name = "Siva", 
@@ -35,7 +37,7 @@ public class MaterialInspectionRestApplication {
                         .username(adminUsername)
                         .password(passwordEncoder.encode("Admin@123"))
                         .email("admin@hcltech.com")
-                        .mobileNum("")
+                        .mobileNum("8639054306")
                         .role("ADMIN")
                         .build();
                 userRepository.save(admin);

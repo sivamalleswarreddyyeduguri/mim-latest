@@ -1,12 +1,16 @@
 package com.hcl.mi.controllers;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hcl.mi.entities.InspectionLot;
 import com.hcl.mi.requestdtos.DateRangeLotSearch;
 import com.hcl.mi.requestdtos.EditLotDto;
 import com.hcl.mi.requestdtos.LotActualDto;
@@ -33,7 +36,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/insp")
+@RequestMapping("/api/v1/inspection")
 @Tag(name = "InspectionLot Controller", description = "responsible for actuals related data")
 public class InspectionLotController {
 	private final InspectionServiceImpl inspectionlotService;
@@ -56,28 +59,23 @@ public class InspectionLotController {
 	}
 
 	@GetMapping("/lot/{id}")
-	public ResponseEntity<?> fetchInspectionLotDetails(@PathVariable Integer id) {
+	public ResponseEntity<InspectionLotDto> fetchInspectionLotDetails(@PathVariable Integer id) {
 
 		LOG.info("Searching lot having id : {}", id);
-		Map<String, Object> response = new HashMap<>();
+		 
 		InspectionLotDto inspLot = inspectionlotService.getLotDetails(id); 		
-		response.put(ApplicationConstants.MSG, ApplicationConstants.SUCCESS_MSG);
-		response.put(ApplicationConstants.DATA, inspLot);
-		return new ResponseEntity<>(response, HttpStatus.OK); 
+		return new ResponseEntity<>(inspLot, HttpStatus.OK); 
 	}
 
 	@GetMapping("/lot/actu")
-	public ResponseEntity<?> getActualsAndCharacteristicsOfLot(@RequestParam Integer id) {
+	public ResponseEntity<List<LotActualsAndCharacteristicsResponseDto>> getActualsAndCharacteristicsOfLot(@RequestParam Integer id) {
 
 		LOG.info("Finding lot actuals and characteristics of lot id : {}", id);
-		Map<String, Object> response = new HashMap<>();
 		List<LotActualsAndCharacteristicsResponseDto> list = inspectionlotService.getActualAndOriginalOfLot(id);
 
 		LOG.info("Returning list of lot actual and characteristics of lot id : {}", id);
 
-		response.put(ApplicationConstants.MSG, ApplicationConstants.SUCCESS_MSG);
-		response.put(ApplicationConstants.DATA, list);
-		return new ResponseEntity<>(response, HttpStatus.OK); 
+		return new ResponseEntity<>(list, HttpStatus.OK);  
 	}
 
 	@PostMapping("/save/lot/actu")
@@ -99,36 +97,31 @@ public class InspectionLotController {
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(new ResponseDto("200", "Inspection lot updated successfully")); 
 	} 
+	
+	
 
-	@PostMapping("/lot/search")  
-	public ResponseEntity<?> DateRangeLotSearch(@Valid @RequestBody DateRangeLotSearch obj) {
+	@PostMapping("/lot/search")   
+	public ResponseEntity<List<DateRangeLotResponseDto>> DateRangeLotSearch(@Valid @RequestBody DateRangeLotSearch obj) {
 
 		LOG.info("Searching lots ");
-		Map<String, Object> response = new HashMap<>();
 		List<DateRangeLotResponseDto> list = inspectionlotService.getAllLotsDetailsBetweenDateRange(obj);
 
 		LOG.info("Returning lots having search criteria , size : {}", list.size());
 		
-		response.put(ApplicationConstants.MSG, ApplicationConstants.SUCCESS_MSG);
-		response.put(ApplicationConstants.DATA, list);
-		return ResponseEntity.status(HttpStatus.OK)
-				.body(response); 	
+			return ResponseEntity.status(HttpStatus.OK)
+				.body(list); 	
 		}
-
+ 
 	/*
 	 * finding inspection lots whose inspection actuals not yet added
 	 */
 	@GetMapping("/lots")
-	public ResponseEntity<?> getAllLotsWhoseInspectionActualNeedToAdded() {
-		Map<String, Object> response = new HashMap<>();
+	public ResponseEntity<List<InspectionLotDto>> getAllLotsWhoseInspectionActualNeedToAdded() {
 		
-		List<InspectionLot> list = inspectionlotService.getAllInspectionLots(); 
-		
-		response.put(ApplicationConstants.MSG, ApplicationConstants.SUCCESS_MSG);
-		response.put(ApplicationConstants.DATA, list);
+		List<InspectionLotDto> list = inspectionlotService.getAllInspectionLots(); 
 		
 		return ResponseEntity.status(HttpStatus.OK)
-				.body(response); 
+				.body(list); 
 		}
 
 	@PutMapping("/actu/edit") 
@@ -138,4 +131,22 @@ public class InspectionLotController {
 				.body(new ResponseDto("200", "Inspection actuals updated successfully")); 
 	}
 
+	
+	@GetMapping("/lot/{id}/report/pdf")
+    public ResponseEntity<byte[]> downloadInspectionReportPdf(@PathVariable Integer id) {
+        LOG.info("Requesting PDF report for lot id: {}", id);
+        byte[] pdfBytes = inspectionlotService.generateReportPdf(id);
+
+        String fileName = "InspectionReport_" + id + ".pdf";
+        String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("attachment", encodedFileName);
+        headers.setContentLength(pdfBytes.length);
+
+        return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
+    }
+	
+	
 }

@@ -23,18 +23,22 @@ import org.springframework.web.multipart.MultipartFile;
 import com.hcl.mi.entities.Material;
 import com.hcl.mi.entities.MaterialInspectionCharacteristics;
 import com.hcl.mi.requestdtos.MaterialCharDto;
+import com.hcl.mi.requestdtos.MaterialCharUpdateDto;
 import com.hcl.mi.responsedtos.MaterialDto;
 import com.hcl.mi.responsedtos.MaterialInspectionCharacteristicsDto;
 import com.hcl.mi.responsedtos.ResponseDto;
+import com.hcl.mi.responsedtos.VendorDto;
 import com.hcl.mi.services.MaterialService;
 import com.hcl.mi.utils.ApplicationConstants;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@RequestMapping("/material")
+@RequestMapping("/api/v1/material")
 @Tag(name = "Material Controller", description = "responsible for adding material related data")
+@Slf4j
 public class MaterialController {
 
 	private MaterialService materialService;
@@ -60,30 +64,24 @@ public class MaterialController {
 
 	}
 
-	@GetMapping("/all")
-	public ResponseEntity<?> getAllActiveMaterials() { 
+	@GetMapping("/get-all") 
+	public ResponseEntity<List<MaterialDto>> getAllMaterials() {   
 
 		LOG.info("calling material service for all material list");
-		Map<String, Object> response = new HashMap<>();
 
-		List<MaterialDto> materialsList = materialService.getAllActiveMaterials();
+		List<MaterialDto> materialsList = materialService.getAllMaterials(); 
 
 		LOG.info("returing all active material list to view");
 		
-		response.put(ApplicationConstants.MSG, ApplicationConstants.SUCCESS_MSG);
-		response.put(ApplicationConstants.DATA, materialsList);
-		return ResponseEntity.status(HttpStatus.OK).body(response); 
+		return ResponseEntity.status(HttpStatus.OK).body(materialsList);  
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<?> getMaterial(@PathVariable String id) {
+	public ResponseEntity<MaterialDto> getMaterial(@PathVariable String id) {
 
 		MaterialDto material = materialService.getMaterial(id);
-		Map<String, Object> response = new HashMap<>();
-
-			response.put(ApplicationConstants.MSG, ApplicationConstants.SUCCESS_MSG);
-			response.put(ApplicationConstants.DATA, material);
-			return ResponseEntity.status(HttpStatus.OK).body(response); 
+ 
+		return ResponseEntity.status(HttpStatus.OK).body(material);  
  
 	} 
 
@@ -113,21 +111,18 @@ public class MaterialController {
  * 
  */
 	@GetMapping("/view/char")
-	public ResponseEntity<?> viewCharacteristics(@RequestParam String materialId) {
+	public ResponseEntity<List<MaterialInspectionCharacteristicsDto>> viewCharacteristics(@RequestParam String materialId) {
 
 		LOG.info("calling material service for material characteristics if material id : {}", materialId);
-		Map<String, Object> response = new HashMap<>();
 		List<MaterialInspectionCharacteristicsDto> list = materialService.getAllCharacteristicsOfMaterial(materialId);
-		response.put(ApplicationConstants.MSG, ApplicationConstants.SUCCESS_MSG);
-		response.put(ApplicationConstants.DATA, list);
-		LOG.info("returning characteristics list of material id, {}", materialId);
+				LOG.info("returning characteristics list of material id, {}", materialId);
 
-		return ResponseEntity.status(HttpStatus.OK).body(response);     
+		return ResponseEntity.status(HttpStatus.OK).body(list);      
 	} 
-
-	 
+ 
+	  
   
-	@PostMapping("/save/char")
+	@PostMapping("/material-char/save")
 	public ResponseEntity<ResponseDto> addMaterialCharacteristics(@Valid @RequestBody MaterialCharDto matChar) {
 
 		LOG.info("new material characteristics adding for material id : {}", matChar.getMatId());
@@ -137,7 +132,17 @@ public class MaterialController {
 		return ResponseEntity.status(HttpStatus.OK).body(new ResponseDto("201", "material characteristics added successfully"));   
  
 	}
+	
+	
+	@GetMapping("/ch/{id}")
+	public ResponseEntity<MaterialInspectionCharacteristicsDto> getCharacteristicsByChId(@PathVariable Integer id) {
 
+		MaterialInspectionCharacteristicsDto material = materialService.getCharacteristicsByChId(id);
+ 
+		return ResponseEntity.status(HttpStatus.OK).body(material);  
+  
+	}  
+ 
 	@GetMapping("/rem/char/lot")
 	public ResponseEntity<?> getLotCurrentCharacteristicsOfAssociatedMaterial(@RequestParam Integer id) {
 		
@@ -156,6 +161,17 @@ public class MaterialController {
 		return ResponseEntity.status(HttpStatus.OK).body(response);    
 
 	} 
+	
+	
+	@PutMapping("/material-char/edit")  
+	public ResponseEntity<ResponseDto> updateCharcteristics(@Valid @RequestBody MaterialCharUpdateDto charDto) {
+		log.info("inside editVendor(): {}", charDto);
+		materialService.update(charDto); 
+		return  ResponseEntity
+				.status(HttpStatus.OK)
+				.body(new ResponseDto("200", "characteristics details updated Successfully"));
+	} 
+	
 	
 	@PostMapping(value = "/char/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<?> addMaterialCharacteristics(@RequestParam("file") MultipartFile file) throws Exception{

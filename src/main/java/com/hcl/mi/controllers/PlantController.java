@@ -24,7 +24,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController 
-@RequestMapping("/plant")
+@RequestMapping("/api/v1/plant")
 @Tag(name = "Plant Controller", description = "responsible for adding plant related data")
 public class PlantController {
 	
@@ -56,7 +56,7 @@ public class PlantController {
 		
 	}  
 
-	@GetMapping("/plants")
+	@GetMapping("/get-all")
 	public ResponseEntity<List<PlantDto>> getAllPlant() {
 		return  ResponseEntity
 				.status(HttpStatus.OK)

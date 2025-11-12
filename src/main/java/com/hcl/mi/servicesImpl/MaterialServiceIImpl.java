@@ -30,6 +30,7 @@ import com.hcl.mi.repositories.InspectionLotRepository;
 import com.hcl.mi.repositories.MaterialCharRepository;
 import com.hcl.mi.repositories.MaterialRepository;
 import com.hcl.mi.requestdtos.MaterialCharDto;
+import com.hcl.mi.requestdtos.MaterialCharUpdateDto;
 import com.hcl.mi.responsedtos.MaterialDto;
 import com.hcl.mi.responsedtos.MaterialInspectionCharacteristicsDto;
 import com.hcl.mi.services.MaterialService;
@@ -58,7 +59,7 @@ public class MaterialServiceIImpl implements MaterialService {
 	} 
 
 	@Override
-	public List<Material> getAllMaterials() {
+	public List<MaterialDto> getAllMaterials() {
 
 		LOG.info("finding all materials");
 
@@ -66,7 +67,10 @@ public class MaterialServiceIImpl implements MaterialService {
 
 		LOG.info("returing all materials list");
 
-		return materialList;
+		return materialList.stream()
+				.map(mat-> MaterialMapper.convertEntityToDto(mat))
+				.toList();
+			
 	}
  
 	@Override
@@ -271,22 +275,22 @@ public class MaterialServiceIImpl implements MaterialService {
 		optMaterial.setMaterialDesc(StringUtil.removeExtraSpaces(materialDto.getMaterialDesc()).toUpperCase());
 
 		optMaterial.setType(StringUtil.removeExtraSpaces(materialDto.getType().toUpperCase()));
+		
+		optMaterial.setStatus(materialDto.isStatus());
 
-		Material savedMaterial = materialRepository.save(MaterialMapper.convertDtoToEntity(materialDto)); 
+		materialRepository.save(MaterialMapper.convertDtoToEntity(optMaterial)); 
 
-
-		LOG.info("material updation saved with id : {}", savedMaterial.getMaterialId());
 
 	}
-
-	@Override
+ 
+	@Override 
 	public List<MaterialDto> getAllActiveMaterials() {
 		return materialRepository.findAllByStatus(true)
 				.stream()
 				.map(material-> MaterialMapper.convertEntityToDto(material))
 				.toList(); 
 	}
-
+ 
 	@SuppressWarnings("resource")
 	@Transactional(rollbackFor = Exception.class)
 	@Override
@@ -345,4 +349,39 @@ public class MaterialServiceIImpl implements MaterialService {
 		return true;
 	}
 
+	@Override
+	public MaterialInspectionCharacteristicsDto getCharacteristicsByChId(Integer id) {
+		
+		
+		LOG.info("finding material with id : {}", id);
+
+		Optional<MaterialInspectionCharacteristics> optMaterial = materialCharReposotory.findById(id);
+ 
+		if (optMaterial.isEmpty()) { 
+
+			LOG.info("no material associated with id : {}", id);
+
+			throw new GenericNotFoundException("Material characteristcs not found with id: " + id);
+		} 
+
+		return  MaterialInspectionCharacteristicsMapper.convertEntityToDto(optMaterial.get());  
+	}
+
+	@Override
+	public void update( MaterialCharUpdateDto charDto) {
+		
+		MaterialInspectionCharacteristics exisCharacteristics = materialCharReposotory.findById(charDto.getCharacteristicId()) 
+	            .orElseThrow(() -> new GenericNotFoundException("Characteristics with ID " + charDto.getCharacteristicId() + " does not exist."));
+
+		exisCharacteristics.setCharacteristicDescription(StringUtil.removeExtraSpaces(charDto.getCharDesc()).toUpperCase());
+		exisCharacteristics.setLowerToleranceLimit(charDto.getLtl());
+		exisCharacteristics.setUpperToleranceLimit(charDto.getUtl());
+		exisCharacteristics.setUnitOfMeasure(charDto.getUom()); 
+
+	      
+
+	   materialCharReposotory.save(exisCharacteristics); 
+		
+	}
+ 
 }

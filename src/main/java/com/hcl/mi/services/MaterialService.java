@@ -8,13 +8,16 @@ import com.hcl.mi.entities.InspectionLot;
 import com.hcl.mi.entities.Material;
 import com.hcl.mi.entities.MaterialInspectionCharacteristics;
 import com.hcl.mi.requestdtos.MaterialCharDto;
+import com.hcl.mi.requestdtos.MaterialCharUpdateDto;
 import com.hcl.mi.responsedtos.MaterialDto;
 import com.hcl.mi.responsedtos.MaterialInspectionCharacteristicsDto;
+
+import jakarta.validation.Valid;
 
 
 public interface MaterialService {
 
-	List<Material> getAllMaterials();
+	List<MaterialDto> getAllMaterials();
 
 	MaterialDto getMaterial(String id);
 
@@ -45,5 +48,9 @@ public interface MaterialService {
 	List<MaterialDto> getAllActiveMaterials();
 	
 	boolean addListOfCharacteristicsForMaterial(MultipartFile file) throws Exception;
+
+	MaterialInspectionCharacteristicsDto getCharacteristicsByChId(Integer id);
+
+	void update(MaterialCharUpdateDto charDto);  
 
 }

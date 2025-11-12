@@ -26,6 +26,9 @@ public class AdminController {
 
     @PostMapping("/create-inspector")
     public ResponseEntity<ResponseDto> createInspector(@Valid @RequestBody NewUser newUser) {
+    	
+    	System.out.println(newUser + "--------------------------------------");
+    	
         newUser.setRole("INSPECTOR");
         userService.saveUser(newUser);
         

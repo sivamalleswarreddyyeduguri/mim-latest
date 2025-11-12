@@ -15,6 +15,7 @@ public class InspectionLotMapper {
         dto.setInspectionEndDate(lot.getInspectionEndDate());
         dto.setResult(lot.getResult());
         dto.setRemarks(lot.getRemarks());
+        dto.setUserName(lot.getCreatedBy()); 
         return dto;
     }
 

@@ -43,6 +43,8 @@ public class MaterialInspectionCharacteristicsDto {
     private Double lowerToleranceLimit;
 
     private String unitOfMeasure;
+    
+    private String matId;
 
     @AssertTrue(message = "Lower tolerance limit must be less than or equal to upper tolerance limit")
     public boolean isToleranceRangeValid() {

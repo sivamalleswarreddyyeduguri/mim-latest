@@ -42,10 +42,8 @@ public class SecurityConfig {
             .exceptionHandling(e -> e.authenticationEntryPoint(entryPoint)
             		.accessDeniedHandler(jwtAccessDeniedHandler))
             .authorizeHttpRequests(auth -> auth
-                // public endpoints
-                .requestMatchers(HttpMethod.POST, "/user/register", "/user/login/**").permitAll()
-                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-
+                    .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+            	    .requestMatchers(HttpMethod.POST, "/user/register", "/user/login/**", "/user/refresh-token").permitAll()
                 // vendor
                 .requestMatchers(HttpMethod.POST, "/api/v1/vendor/save").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/v1/vendor/edit").hasRole("ADMIN")
@@ -53,23 +51,28 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/vendor/**").hasAnyRole("ADMIN","INSPECTOR","USER")
 
                 // plant
-                .requestMatchers(HttpMethod.POST, "/plant/save").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.PUT, "/plant/edit").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/plant/delete/**").hasRole("ADMIN")
-                .requestMatchers("/plant/**").hasAnyRole("ADMIN","INSPECTOR","USER")
+                .requestMatchers(HttpMethod.POST, "/api/v1/plant/save").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/v1/plant/edit").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/v1/plant/delete/**").hasRole("ADMIN")
+                .requestMatchers("/api/v1/plant/**").hasAnyRole("ADMIN","INSPECTOR","USER")
 
-                // material
-                .requestMatchers(HttpMethod.POST, "/material/save").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.PUT, "/material/edit").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/material/delete/**").hasRole("ADMIN")
-                .requestMatchers("/material/**").hasAnyRole("ADMIN","INSPECTOR","USER")
+                // material and material inspection characteristics
+                .requestMatchers(HttpMethod.POST, "/api/v1/material/save").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/v1/material/edit").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/v1/material/delete/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/v1/material/material-char/save").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PUT, "/api/v1/ch/edit").hasRole("ADMIN")
+
+                .requestMatchers("/api/v1/material/**").hasAnyRole("ADMIN","INSPECTOR","USER")
+                
+               
 
                 // inspection
-                .requestMatchers(HttpMethod.POST, "/insp/create/lot").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "api/v1//inspection/create/lot").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/insp/lot/edit").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.POST, "/insp/save/lot/actu").hasRole("INSPECTOR")
                 .requestMatchers(HttpMethod.PUT, "/insp/actu/edit").hasRole("INSPECTOR")
-                .requestMatchers("/insp/**").hasAnyRole("ADMIN","INSPECTOR","USER")
+                .requestMatchers("/api/v1/inspection/**").hasAnyRole("ADMIN","INSPECTOR","USER")
 
                 // admin endpoints
                 .requestMatchers("/admin/**").hasRole("ADMIN")

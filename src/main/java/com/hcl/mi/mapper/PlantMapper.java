@@ -14,8 +14,9 @@ public class PlantMapper {
         
         dto.setPlantId(plant.getPlantId());
         dto.setPlantName(plant.getPlantName());
-        dto.setLocation(plant.getLocation());
         dto.setStatus(plant.isStatus());
+        dto.setCity(plant.getCity());
+        dto.setState(plant.getState());  
         return dto;
     }
 
@@ -24,8 +25,9 @@ public class PlantMapper {
         Plant plant = new Plant();
         plant.setPlantId(plantDto.getPlantId());
         plant.setPlantName(plantDto.getPlantName());
-        plant.setLocation(plantDto.getLocation());
         plant.setStatus(plantDto.isStatus());
+        plant.setCity(plantDto.getCity());
+        plant.setState(plantDto.getState());   
         return plant;
     }
 }

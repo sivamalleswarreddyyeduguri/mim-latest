@@ -14,6 +14,9 @@ public class VendorMapper {
         dto.setName(vendor.getName());
         dto.setEmail(vendor.getEmail());
         dto.setStatus(vendor.isStatus());
+        dto.setCity(vendor.getCity());
+        dto.setPhoneNumber(vendor.getPhoneNumber());
+        dto.setState(vendor.getState()); 
         return dto;
     }
 
@@ -22,6 +25,9 @@ public class VendorMapper {
         vendor.setName(dto.getName());
         vendor.setEmail(dto.getEmail());
         vendor.setStatus(dto.isStatus());
+        vendor.setCity(dto.getCity());
+        vendor.setPhoneNumber(dto.getPhoneNumber());
+        vendor.setState(dto.getState());
         return vendor;
-    }
+    } 
 }

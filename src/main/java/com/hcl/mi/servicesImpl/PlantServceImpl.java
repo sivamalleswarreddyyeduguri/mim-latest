@@ -35,7 +35,6 @@ public class PlantServceImpl implements PlantService {
 	    }
 
 	    plantDto.setPlantId(StringUtil.removeAllSpaces(plantDto.getPlantId()).toUpperCase());
-	    plantDto.setLocation(StringUtil.removeExtraSpaces(plantDto.getLocation()).toUpperCase());
 	    plantDto.setPlantName(StringUtil.removeExtraSpaces(plantDto.getPlantName()).toUpperCase());
 
 	    plantRepository.save(PlantMapper.convertDtoToEntity(plantDto)); 
@@ -59,22 +58,36 @@ public class PlantServceImpl implements PlantService {
 	    return PlantMapper.convertEntityToDto(optPlant.get()); 
 	}
 	
+//	@Override
+//	public void saveEditedPlant(Plant plant) {
+//	    String plantId = StringUtil.removeExtraSpaces(plant.getPlantId()).toUpperCase();
+//	    plant.setPlantId(plantId);
+//
+//	    Optional<Plant> existingPlant = plantRepository.findById(plantId);
+//	    if (existingPlant.isEmpty()) {
+//	        throw new GenericNotFoundException("Plant with ID " + plantId + " does not exist.");
+//	    }
+//
+//	    plant.setPlantName(StringUtil.removeExtraSpaces(plant.getPlantName()).toUpperCase());
+//
+//	    plantRepository.save(plant);
+//	}
+
 	@Override
 	public void saveEditedPlant(Plant plant) {
 	    String plantId = StringUtil.removeExtraSpaces(plant.getPlantId()).toUpperCase();
-	    plant.setPlantId(plantId);
 
-	    Optional<Plant> existingPlant = plantRepository.findById(plantId);
-	    if (existingPlant.isEmpty()) {
-	        throw new GenericNotFoundException("Plant with ID " + plantId + " does not exist.");
-	    }
+	    Plant existingPlant = plantRepository.findById(plantId)
+	        .orElseThrow(() -> new GenericNotFoundException("Plant with ID " + plantId + " does not exist."));
 
-	    plant.setLocation(StringUtil.removeExtraSpaces(plant.getLocation()).toUpperCase());
-	    plant.setPlantName(StringUtil.removeExtraSpaces(plant.getPlantName()).toUpperCase());
+	    existingPlant.setPlantName(StringUtil.removeExtraSpaces(plant.getPlantName()).toUpperCase());
+	    existingPlant.setStatus(plant.isStatus());
+	    existingPlant.setState(plant.getState());
+	    existingPlant.setCity(plant.getCity());
 
-	    plantRepository.save(plant);
+	    Plant savedPlant = plantRepository.save(existingPlant);
+	    System.out.println("Saved: " + savedPlant);
 	}
-
  
 
 	@Override

@@ -22,7 +22,7 @@ import lombok.Setter;
 @Table(name = "mat_isp_ch")
 @Getter 
 @Setter
-public class MaterialInspectionCharacteristics {
+public class MaterialInspectionCharacteristics extends BaseEntity{
 	
 	@Id	
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "chare_seq")

@@ -16,7 +16,7 @@ public interface InspectionService {
 	
 	List<LotActualsAndCharacteristicsResponseDto> getActualAndOriginalOfLot(Integer id);
 	
-	List<InspectionLot> getAllInspectionLots();
+	List<InspectionLotDto> getAllInspectionLots();
 	
 	void saveInspActuals(LotActualDto actuals); 
 	

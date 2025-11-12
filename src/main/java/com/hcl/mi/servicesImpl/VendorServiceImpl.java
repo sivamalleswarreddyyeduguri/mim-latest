@@ -22,18 +22,6 @@ public class VendorServiceImpl implements VendorService {
 		this.vendorRepository = vendorRepository;
 	}
 
-//	@Override
-//	public boolean addNewVendor(Vendor vendor) {
-//
-//		vendor.setName(StringUtil.removeExtraSpaces(vendor.getName()).toUpperCase());
-//		vendor.setEmail(StringUtil.removeExtraSpaces(vendor.getEmail()));
-//		Vendor savedVendor = vendorRepository.save(vendor);
-//		if (savedVendor.getVendorId() > 0) {
-//			return true;
-//		}
-//		return false;
-//
-//	}
 	
 	@Override
 	public void addNewVendor(VendorDto vendorDto) {
@@ -65,13 +53,16 @@ public class VendorServiceImpl implements VendorService {
 				.stream()
 				.map(vendor-> VendorMapper.convertEntityToDto(vendor))
 				.toList(); 
-		
+		 
 	}
 
 	@Override
-	public List<Vendor> getAllActiveVendor() {
-		List<Vendor> vendorsList = vendorRepository.findAllActiveVendors(true);
-		return vendorsList;
+	public List<VendorDto> getAllActiveVendor() {
+		return vendorRepository.findAllActiveVendors(true)
+				.stream()
+				.map(vendor-> VendorMapper.convertEntityToDto(vendor))
+				.toList();
+		
 	}
 
 	@Override
@@ -100,8 +91,13 @@ public class VendorServiceImpl implements VendorService {
 	    existingVendor.setName(StringUtil.removeExtraSpaces(vendorDto.getName()).toUpperCase());
 	    existingVendor.setEmail(StringUtil.removeExtraSpaces(vendorDto.getEmail()));
 	    existingVendor.setStatus(vendorDto.isStatus());
+	    existingVendor.setPhoneNumber(vendorDto.getPhoneNumber());
+	    existingVendor.setCity(vendorDto.getCity().toUpperCase());
+	    existingVendor.setState(vendorDto.getState().toUpperCase()); 
+	    
 
-	    vendorRepository.save(existingVendor);
+	   vendorRepository.save(existingVendor);
+	    
 	}
 
 }

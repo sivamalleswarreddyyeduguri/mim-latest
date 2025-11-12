@@ -15,6 +15,7 @@ public class MaterialInspectionCharacteristicsMapper {
 		dto.setUpperToleranceLimit(entity.getUpperToleranceLimit());
 		dto.setLowerToleranceLimit(entity.getLowerToleranceLimit());
 		dto.setUnitOfMeasure(entity.getUnitOfMeasure());
+		dto.setMatId(entity.getMaterial().getMaterialId()); 
 		return dto;
 	}
 

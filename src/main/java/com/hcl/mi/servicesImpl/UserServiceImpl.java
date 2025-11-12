@@ -1,5 +1,6 @@
 package com.hcl.mi.servicesImpl;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.hcl.mi.entities.User;
 import com.hcl.mi.exceptions.GenericAlreadyExistsException;
+import com.hcl.mi.mapper.UserMapper;
 import com.hcl.mi.repositories.UserRepository;
 import com.hcl.mi.requestdtos.NewUser;
 import com.hcl.mi.services.UserService;
@@ -70,7 +72,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         userRepo.save(newUser);
     }
 
-
+    
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -84,19 +86,37 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 .build(); 
     } 
  
-    @Override
-    public boolean checkUserCredentails(String username, String password) {
-        Optional<User> optionalUser = userRepo.findByUsername(username);
+//    @Override
+//    public boolean checkUserCredentails(String username, String password) {
+//        Optional<User> optionalUser = userRepo.findByUsername(username);
+//
+//        if (optionalUser.isEmpty()) {
+//            return false;
+//        }
+// 
+//        User user = optionalUser.get();
+//        
+//        
+//
+//        return passwordEncoder.matches(password, user.getPassword());
+//    }
 
-        if (optionalUser.isEmpty()) {
-            return false;
-        }
- 
-        User user = optionalUser.get();
-        
-        
 
-        return passwordEncoder.matches(password, user.getPassword());
-    }
+
+	@Override
+	public User checkUserCredentails(String username, String password) {
+		return userRepo.findByUsername(username)
+                .filter(user -> passwordEncoder.matches(password, user.getPassword()))
+                .orElse(null); 
+	}
+
+
+	@Override
+	public List<NewUser> getAllUsers() {
+		
+		return userRepo.findAll()
+		 .stream()
+		 .map(u-> UserMapper.convertEntityToDto(u)).toList();
+	}
 
 }

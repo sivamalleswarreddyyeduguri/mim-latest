@@ -56,7 +56,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             log.warn("Invalid JWT token structure");
             sendForbidden(response, "Invalid JWT token");
             return;
-        }
+        } 
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails ud;

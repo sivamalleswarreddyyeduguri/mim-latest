@@ -16,7 +16,7 @@ import lombok.Data;
 @Entity
 @Data
 @Table
-public class Material {
+public class Material extends BaseEntity{
 	
 	@Id
 	@Column(name = "mat_id")

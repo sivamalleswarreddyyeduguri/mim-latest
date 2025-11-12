@@ -21,5 +21,5 @@ public class EditLotDto {
 	@NotNull(message = "please provide valid date format of yyyy-mm-dd")
 	private LocalDate date;
 	
-	private int userid;
+//	private int userid;
 }

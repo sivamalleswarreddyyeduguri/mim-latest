@@ -22,4 +22,8 @@ public class DateRangeLotResponseDto {
 	private String inspectedBy;
 	
 	private String material;
+	
+	private String plant;
+	
+	private String vendor;
 }

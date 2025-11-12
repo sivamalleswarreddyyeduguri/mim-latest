@@ -15,7 +15,7 @@ import lombok.Data;
 @Table(name = "insp_actu")
 @Data
 @Builder
-public class InspectionActuals {
+public class InspectionActuals extends BaseEntity{
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,7 +33,7 @@ public class InspectionActuals {
 	 
 	private Double minimumMeasurement;
 	
-	
+	 
 
 	public InspectionActuals() {
 		super();
