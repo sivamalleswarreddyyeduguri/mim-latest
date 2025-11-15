@@ -32,9 +32,9 @@ public class Transformers {
 
 			responseList.add(respLot);
 		}
-		
+		 
 		return responseList;
-		
+		 
 	}
 	 
 	public static MaterialInspectionCharacteristics convertMaterialCharDtoToMaterialInspectionCharObj(MaterialCharDto matChar, Material material) {

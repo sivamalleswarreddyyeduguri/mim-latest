@@ -1,11 +1,10 @@
 package com.hcl.mi.mapper;
 
-import org.springframework.stereotype.Component;
 
 import com.hcl.mi.entities.InspectionLot;
 import com.hcl.mi.responsedtos.InspectionLotDto;
 
-public class InspectionLotMapper {
+public class InspectionLotMapper { 
 
     public static InspectionLotDto convertEntityToDto(InspectionLot lot) {
         InspectionLotDto dto = new InspectionLotDto();

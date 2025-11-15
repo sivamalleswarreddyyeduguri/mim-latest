@@ -16,4 +16,3 @@ public class LotActualsAndCharacteristicsResponseDto {
 	private Double actualUtl;
 	private Double actualLtl;
 }
- 

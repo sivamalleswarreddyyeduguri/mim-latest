@@ -2,7 +2,6 @@ package com.hcl.mi.services;
 
 import java.util.List;
 
-import com.hcl.mi.entities.Plant;
 import com.hcl.mi.responsedtos.PlantDto;
 
 public interface PlantService {
@@ -14,7 +13,7 @@ public interface PlantService {
 	PlantDto getPlant(String id);
 
 	
-	void saveEditedPlant(Plant plant);
+	void saveEditedPlant(PlantDto plantDto);
 
 	void deletePlant(String plantId);
 

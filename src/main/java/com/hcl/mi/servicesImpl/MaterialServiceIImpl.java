@@ -1,12 +1,17 @@
 package com.hcl.mi.servicesImpl;
 
+ 
+
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -20,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.hcl.mi.entities.InspectionLot;
 import com.hcl.mi.entities.Material;
 import com.hcl.mi.entities.MaterialInspectionCharacteristics;
+import com.hcl.mi.entities.Vendor;
 import com.hcl.mi.exceptions.DuplicateCharacteristicException;
 import com.hcl.mi.exceptions.GenericAlreadyExistsException;
 import com.hcl.mi.exceptions.GenericNotFoundException;
@@ -36,17 +42,19 @@ import com.hcl.mi.responsedtos.MaterialInspectionCharacteristicsDto;
 import com.hcl.mi.services.MaterialService;
 import com.hcl.mi.utils.StringUtil;
 
+import lombok.extern.slf4j.Slf4j;
+ 
 @Service
+@Slf4j
 public class MaterialServiceIImpl implements MaterialService {
 
 	private MaterialRepository materialRepository;
 
 	private MaterialCharRepository materialCharReposotory;
 
-	private InspectionLotRepository inspectionLotRepo;
+	private InspectionLotRepository inspectionLotRepo; 
 
-	private Logger LOG = LoggerFactory.getLogger(MaterialServiceIImpl.class);
-
+ 
 	public MaterialServiceIImpl(MaterialRepository materialRepository, MaterialCharRepository materialCharReposotory,
 			InspectionLotRepository inspectionLotRepo) {
 		super();
@@ -55,17 +63,17 @@ public class MaterialServiceIImpl implements MaterialService {
 		this.materialCharReposotory = materialCharReposotory;
 
 		this.inspectionLotRepo = inspectionLotRepo;
-
+ 
 	} 
 
 	@Override
 	public List<MaterialDto> getAllMaterials() {
 
-		LOG.info("finding all materials");
+		log.info("finding all materials");
 
 		List<Material> materialList = materialRepository.findAll();
 
-		LOG.info("returing all materials list");
+		log.info("returing all materials list");
 
 		return materialList.stream()
 				.map(mat-> MaterialMapper.convertEntityToDto(mat))
@@ -76,13 +84,13 @@ public class MaterialServiceIImpl implements MaterialService {
 	@Override
 	public MaterialDto getMaterial(String id) {
 
-		LOG.info("finding material with id : {}", id);
+		log.info("finding material with id : {}", id);
 
 		Optional<Material> optMaterial = materialRepository.findById(id.toUpperCase());
 
 		if (optMaterial.isEmpty()) {
 
-			LOG.info("no material associated with id : {}", id);
+			log.info("no material associated with id : {}", id);
 
 			throw new GenericNotFoundException("Material not found with id: " + id);
 		} 
@@ -93,13 +101,13 @@ public class MaterialServiceIImpl implements MaterialService {
 	@Override
 	public void deleteMaterial(String id) {
 
-		LOG.info("finding material with id : {}", id);
+		log.info("finding material with id : {}", id);
 
 		Optional<Material> optMaterial = materialRepository.findById(id.toUpperCase()); 
 
 		if (optMaterial.isEmpty()) {
 
-			LOG.info("no material associated with id : {}", id);
+			log.info("no material associated with id : {}", id);
 			
 			throw new GenericNotFoundException("Material not found with id: " + id);
 
@@ -107,15 +115,15 @@ public class MaterialServiceIImpl implements MaterialService {
 
 		Material material = optMaterial.get();
 
-		LOG.info("setting material status to INACTIVE");
+		log.info("setting material status to INACTIVE");
 
 		material.setStatus(false);
 
-		LOG.info("saving material of id : {}", id);
+		log.info("saving material of id : {}", id);
 
 		materialRepository.save(material);
 
-		LOG.info("returning true");
+		log.info("returning true");
 
 	}
 
@@ -140,7 +148,7 @@ public class MaterialServiceIImpl implements MaterialService {
 
 	    materialRepository.save(material);
 
-	    LOG.info("New material saved with ID: {}", materialId);
+	    log.info("New material saved with ID: {}", materialId);
 	}
 
 	@Override
@@ -151,26 +159,26 @@ public class MaterialServiceIImpl implements MaterialService {
 		MaterialInspectionCharacteristics matCharObj = Transformers
 				.convertMaterialCharDtoToMaterialInspectionCharObj(matChar, material);
 
-		LOG.info("new Material characteristic adding {}", matChar);
+		log.info("new Material characteristic adding {}", matChar);
 
 		 materialCharReposotory.save(matCharObj);
 
 	}
  
 	
-	private Material isCharacteristicConditionSatisfy(MaterialCharDto matChar) {
+	public Material isCharacteristicConditionSatisfy(MaterialCharDto matChar) {
 		
 	    MaterialDto materialDto;
 	    
 	    try {
 	        materialDto = getMaterial(matChar.getMatId());
 	    } catch (GenericNotFoundException e) {
-	        LOG.error("Material not found in isCharacteristicConditionSatisfy for ID: {}", matChar.getMatId());
+	        log.error("Material not found in isCharacteristicConditionSatisfy for ID: {}", matChar.getMatId());
 	        throw e;
 	    }
  
 	    Material material = MaterialMapper.convertDtoToEntity(materialDto);
-	    System.out.println(material + "-".repeat(100)); 
+	   log.info(material + "-".repeat(100)); 
 
 	    for (MaterialInspectionCharacteristicsDto matCharItem : getAllCharacteristicsOfMaterial(matChar.getMatId())) {
 	        String existingCharDesc = matCharItem.getCharacteristicDescription(); 
@@ -187,7 +195,7 @@ public class MaterialServiceIImpl implements MaterialService {
 	@Override
 	public List<InspectionLot> getAllInspectionLots() {
 
-		LOG.info("getting all lots");
+		log.info("getting all lots");
 
 		List<InspectionLot> lots = inspectionLotRepo.findAll();
 
@@ -197,13 +205,13 @@ public class MaterialServiceIImpl implements MaterialService {
 
 			if (lot.getMaterial().getMaterialChar().size() != lot.getInspectionActuals().size()) {
 
-				LOG.info("adding lots those have not done all inspection actuals");
+				log.info("adding lots those have not done all inspection actuals");
 
 				responseList.add(lot);
 			}
 		}
 
-		LOG.info("returing response list");
+		log.info("returing response list");
 
 		return responseList;
 	}
@@ -237,7 +245,7 @@ public class MaterialServiceIImpl implements MaterialService {
 
 				} else {
 
-					LOG.info("getting all material characteristics of lot {}", id);
+					log.info("getting all material characteristics of lot {}", id);
 
 					repsonseList.add(item);
 				}
@@ -291,75 +299,160 @@ public class MaterialServiceIImpl implements MaterialService {
 				.toList(); 
 	}
  
+	/**
+	 *  Save Characteristics by using Multi-Part file
+	 */
+	
 	@SuppressWarnings("resource")
 	@Transactional(rollbackFor = Exception.class)
 	@Override
 	public boolean addListOfCharacteristicsForMaterial(MultipartFile file) throws Exception {
-
-		String fileExtension = StringUtils.getFilenameExtension(file.getOriginalFilename());
-
-		ArrayList<String> list = new ArrayList<>();
-		list.add("xls");
-		list.add("xlsx");
-		list.add("csv");
-
-		if (!list.contains(fileExtension)) {
-			throw new Exception("please provide .xls or .xlsx or .csv file");
-		}
-
-		try {
-			XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
-			XSSFSheet sheet_0 = workbook.getSheetAt(0);
-
-			for (int row = 1; row < sheet_0.getPhysicalNumberOfRows(); row++) {
-				XSSFRow currRow = sheet_0.getRow(row);
-
-				String materialId = currRow.getCell(0).getStringCellValue();
-				String charDesc = currRow.getCell(1).getStringCellValue();
-				double utl = currRow.getCell(2).getNumericCellValue();
-				double ltl = currRow.getCell(3).getNumericCellValue();
-				String uom = currRow.getCell(4).getStringCellValue();
-
-				MaterialCharDto materialCharDto = MaterialCharDto.builder()
-					                                           	.matId(materialId)
-						.charDesc(charDesc)
-						.uom(uom).utl(utl)
-						.ltl(ltl)
-						.build();
-
-				Material material = isCharacteristicConditionSatisfy(materialCharDto);
-				if (material == null) {
-					LOG.warn(
-							"material characteristic {} is already available or materila is not available with id of {}",
-							charDesc, materialId);
-					throw new Exception(
-							"material characteristic is already available or materila is not available with id of : "
-									+ materialId);
-				} else {
-					MaterialInspectionCharacteristics matChar = Transformers
-							.convertMaterialCharDtoToMaterialInspectionCharObj(materialCharDto, material);
-					material.getMaterialChar().add(matChar);
-					materialRepository.save(material);
-					LOG.info("new material characteristic {} saved for material id : {}", charDesc, materialId);
-				}
-			}
-		} catch (IOException e) {
-			LOG.warn("unable to read uploaded document");
-		}
-		return true;
+	 
+	    String fileExtension = StringUtils.getFilenameExtension(file.getOriginalFilename());
+	    List<String> validExtensions = Arrays.asList("xls", "xlsx", "csv");
+	 
+	    if (fileExtension == null || !validExtensions.contains(fileExtension.toLowerCase())) {
+	        throw new Exception("Please provide .xls, .xlsx, or .csv file");
+	    }
+	 
+	    try {
+	        if (fileExtension.equalsIgnoreCase("csv")) {
+	            try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
+	                String line;
+	                int row = 0;
+	                while ((line = reader.readLine()) != null) {
+	                    if (row++ == 0) continue; 
+	 
+	                    String[] values = line.split(",");
+	                    if (values.length < 6) {
+	                        log.warn("Skipping invalid row: {}", Arrays.toString(values));
+	                        continue;
+	                    }
+	 
+	                    String charDesc = values[1].trim();
+	                    double utl = Double.parseDouble(values[2].trim());
+	                    double ltl = Double.parseDouble(values[3].trim());
+	                    String uom = values[4].trim();
+	                    String matId = values[5].trim();
+	 
+	                    processMaterialCharacteristic(matId, charDesc, utl, ltl, uom);
+	                }
+	            }
+	        } else {
+	            try (XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream())) {
+	                XSSFSheet sheet = workbook.getSheetAt(0);
+	 
+	                for (int row = 1; row < sheet.getPhysicalNumberOfRows(); row++) {
+	                    XSSFRow currRow = sheet.getRow(row);
+	                    if (currRow == null) continue;
+	 
+	                    String charDesc = getCellValueAsString(currRow.getCell(1)); 
+	                    Double utl = getCellValueAsDouble(currRow.getCell(2));     
+	                    Double ltl = getCellValueAsDouble(currRow.getCell(3));     
+	                    String uom = getCellValueAsString(currRow.getCell(4));      
+	                    String matId = getCellValueAsString(currRow.getCell(5));    
+	 
+	                    if (charDesc == null || utl == null || ltl == null || uom == null || matId == null) {
+	                        log.warn("Skipping invalid row: {}", row);
+	                        continue;
+	                    }
+	 
+	                    processMaterialCharacteristic(matId, charDesc, utl, ltl, uom);
+	                }
+	            }
+	        }
+	 
+	    } catch (IOException e) {
+	        log.error("Unable to read uploaded document", e);
+	        throw new Exception("Failed to read file content", e);
+	    }
+	 
+	    return true;
 	}
+	 
+	/**
+	* Helper to safely convert Excel cell to String
+	*/
+	private String getCellValueAsString(Cell cell) {
+	    if (cell == null) return null;
+	    switch (cell.getCellType()) {
+	        case STRING:
+	            return cell.getStringCellValue().trim();
+	        case NUMERIC:
+	            double num = cell.getNumericCellValue();
+	            if (num == Math.floor(num)) {
+	                return String.valueOf((long) num);
+	            } else {
+	                return String.valueOf(num);
+	            }
+	        case BOOLEAN:
+	            return String.valueOf(cell.getBooleanCellValue());
+	        case FORMULA:
+	            return cell.getCellFormula();
+	        case BLANK:
+	        default:
+	            return null;
+	    }
+	}
+	 
+	/**
+	* Helper to safely convert Excel cell to Double
+	*/
+	private Double getCellValueAsDouble(Cell cell) {
+	    if (cell == null) return null;
+	    try {
+	        switch (cell.getCellType()) {
+	            case NUMERIC:
+	                return cell.getNumericCellValue();
+	            case STRING:
+	                String strVal = cell.getStringCellValue().trim();
+	                return Double.parseDouble(strVal);
+	            default:
+	                return null;
+	        }
+	    } catch (NumberFormatException e) {
+	        log.warn("Invalid numeric value in cell: {}", cell);
+	        return null;
+	    }
+	}
+	 
+	/**
+	* Centralized logic for characteristic creation and persistence
+	*/
+	private void processMaterialCharacteristic(String materialId, String charDesc, double utl, double ltl, String uom) throws Exception {
+	    MaterialCharDto materialCharDto = MaterialCharDto.builder()
+	            .matId(materialId)
+	            .charDesc(charDesc)
+	            .uom(uom)
+	            .utl(utl)
+	            .ltl(ltl)
+	            .build();
+	 
+	    Material material = isCharacteristicConditionSatisfy(materialCharDto);
+	    if (material == null) {
+	        log.warn("Material characteristic {} already exists or material not found: {}", charDesc, materialId);
+	        throw new Exception("Material characteristic already exists or material not found for id: " + materialId);
+	    } else {
+	        MaterialInspectionCharacteristics matChar =
+	                Transformers.convertMaterialCharDtoToMaterialInspectionCharObj(materialCharDto, material);
+	        material.getMaterialChar().add(matChar);
+	        materialRepository.save(material);
+	        log.info("New material characteristic '{}' saved for material id: {}", charDesc, materialId);
+	    }
+	}
+	 
 
 	@Override
 	public MaterialInspectionCharacteristicsDto getCharacteristicsByChId(Integer id) {
 		
 		
-		LOG.info("finding material with id : {}", id);
+		log.info("finding material with id : {}", id);
 
 		Optional<MaterialInspectionCharacteristics> optMaterial = materialCharReposotory.findById(id);
  
 		if (optMaterial.isEmpty()) { 
 
-			LOG.info("no material associated with id : {}", id);
+			log.info("no material associated with id : {}", id);
 
 			throw new GenericNotFoundException("Material characteristcs not found with id: " + id);
 		} 
@@ -382,6 +475,26 @@ public class MaterialServiceIImpl implements MaterialService {
 
 	   materialCharReposotory.save(exisCharacteristics); 
 		
+	} 
+
+	@Override
+	public void deleteMaterialCharacteristics(Integer id) {
+		
+		 materialCharReposotory.findById(id)
+		            .orElseThrow(() -> new GenericNotFoundException("Material Characteristic with ID " + id + " does not exist."));
+		    materialCharReposotory.deleteById(id);
+		
+	}
+
+	@Override
+	public List<MaterialInspectionCharacteristicsDto> getAllCharacteristics() {
+		
+		return materialCharReposotory.findAll()
+		 .stream()
+ 		.map(characteristics-> MaterialInspectionCharacteristicsMapper.convertEntityToDto(characteristics))
+ 		.toList(); 
+		 
 	}
  
 }
+ 

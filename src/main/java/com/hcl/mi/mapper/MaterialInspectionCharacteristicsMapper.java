@@ -17,7 +17,7 @@ public class MaterialInspectionCharacteristicsMapper {
 		dto.setUnitOfMeasure(entity.getUnitOfMeasure());
 		dto.setMatId(entity.getMaterial().getMaterialId()); 
 		return dto;
-	}
+	} 
 
 	public static MaterialInspectionCharacteristics convertDtoToEntity(MaterialInspectionCharacteristicsDto dto) {
 		MaterialInspectionCharacteristics entity = new MaterialInspectionCharacteristics();

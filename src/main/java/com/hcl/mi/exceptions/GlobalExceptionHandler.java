@@ -10,7 +10,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -31,7 +30,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		ErrorResponseDto errorResponseDTO = new ErrorResponseDto(webRequest.getDescription(false), HttpStatus.CONFLICT,
 				exception.getMessage(), LocalDateTime.now()); 
 		return new ResponseEntity<>(errorResponseDTO, HttpStatus.CONFLICT); 
-	} 
+	}  
 	
 	@ExceptionHandler(GenericAlreadyExistsException.class) 
 	public ResponseEntity<ErrorResponseDto> handlePlantAlreadyExistsException(GenericAlreadyExistsException exception,
@@ -86,7 +85,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	        if (error instanceof FieldError fieldError) {
 	            validationErrors.put(fieldError.getField(), fieldError.getDefaultMessage());
 	        } else {
-	            // For class-level errors like @ValidDateRange
 	            validationErrors.put("startDate", error.getDefaultMessage());
 	        }
 	    }

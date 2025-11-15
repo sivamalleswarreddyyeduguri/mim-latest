@@ -1,8 +1,6 @@
 package com.hcl.mi.services;
 
 import java.util.List;
-
-import com.hcl.mi.entities.Vendor;
 import com.hcl.mi.responsedtos.VendorDto;
 
 public interface VendorService {

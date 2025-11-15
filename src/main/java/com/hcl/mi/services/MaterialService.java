@@ -5,14 +5,12 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.hcl.mi.entities.InspectionLot;
-import com.hcl.mi.entities.Material;
-import com.hcl.mi.entities.MaterialInspectionCharacteristics;
+
 import com.hcl.mi.requestdtos.MaterialCharDto;
 import com.hcl.mi.requestdtos.MaterialCharUpdateDto;
 import com.hcl.mi.responsedtos.MaterialDto;
 import com.hcl.mi.responsedtos.MaterialInspectionCharacteristicsDto;
 
-import jakarta.validation.Valid;
 
 
 public interface MaterialService {
@@ -30,16 +28,6 @@ public interface MaterialService {
 	List<InspectionLot> getAllInspectionLots();
 	
 	List<MaterialInspectionCharacteristicsDto> getMaterialCharByLotId(Integer id);
-//
-//	boolean createInspectionLot(InspectionLot lot);
-// 
-//	List<Vendor> getAllVendors();
-//
-//	List<Plant> getAllPlants();
-//
-//	InspectionLot getInspectionLot(Integer id);
-//
-//	boolean saveInspActuals(InspectionActuals actuals);
  
 	List<MaterialInspectionCharacteristicsDto> getAllCharacteristicsOfMaterial(String id);
 
@@ -51,6 +39,10 @@ public interface MaterialService {
 
 	MaterialInspectionCharacteristicsDto getCharacteristicsByChId(Integer id);
 
-	void update(MaterialCharUpdateDto charDto);  
+	void update(MaterialCharUpdateDto charDto);
+
+	void deleteMaterialCharacteristics(Integer id);
+
+	List<MaterialInspectionCharacteristicsDto> getAllCharacteristics();    
 
 }

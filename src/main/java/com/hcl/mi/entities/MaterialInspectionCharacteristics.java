@@ -35,7 +35,7 @@ public class MaterialInspectionCharacteristics extends BaseEntity{
 	
 	@Column(name = "tol_ul")
 	private Double upperToleranceLimit;
-	
+	 
 	@Column(name = "tol_ll")
 	private Double lowerToleranceLimit;
 	

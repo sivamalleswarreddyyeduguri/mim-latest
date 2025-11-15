@@ -9,6 +9,8 @@ import lombok.Data;
 @Data
 public class NewUser {
 	
+	private Integer id;
+	
 	@Size(min = 3, max = 25, message = "username should be min 5 char and max char 25")
 	private String username;
 	

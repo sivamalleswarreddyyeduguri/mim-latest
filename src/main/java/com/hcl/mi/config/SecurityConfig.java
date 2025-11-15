@@ -15,15 +15,16 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.hcl.mi.security.JwtAccessDeniedHandler;
 import com.hcl.mi.security.JwtAuthenticationEntryPoint;
 import com.hcl.mi.security.JwtAuthenticationFilter;
+import com.hcl.mi.utils.ApplicationConstants;
 
 @Configuration 
-@EnableMethodSecurity
-public class SecurityConfig {
+@EnableMethodSecurity 
+public class SecurityConfig { 
 
     private final JwtAuthenticationFilter jwtFilter;
     private final JwtAuthenticationEntryPoint entryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
-
+ 
     public SecurityConfig(
             JwtAuthenticationFilter jwtFilter, 
             JwtAuthenticationEntryPoint entryPoint, 
@@ -32,7 +33,7 @@ public class SecurityConfig {
         this.entryPoint = entryPoint;
         this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
     } 
- 
+   
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -43,39 +44,35 @@ public class SecurityConfig {
             		.accessDeniedHandler(jwtAccessDeniedHandler))
             .authorizeHttpRequests(auth -> auth
                     .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-            	    .requestMatchers(HttpMethod.POST, "/user/register", "/user/login/**", "/user/refresh-token").permitAll()
-                // vendor
-                .requestMatchers(HttpMethod.POST, "/api/v1/vendor/save").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.PUT, "/api/v1/vendor/edit").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/api/v1/vendor/delete/**").hasRole("ADMIN")
-                .requestMatchers("/api/v1/vendor/**").hasAnyRole("ADMIN","INSPECTOR","USER")
+            	    .requestMatchers(HttpMethod.POST, "/api/v1/user/register", "/api/v1/user/login/**", "/user/refresh-token").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/vendor/save").hasRole(ApplicationConstants.ADMIN_ROLE)
+                .requestMatchers(HttpMethod.PUT, "/api/v1/vendor/edit").hasRole(ApplicationConstants.ADMIN_ROLE) 
+                .requestMatchers(HttpMethod.DELETE, "/api/v1/vendor/delete/**").hasRole(ApplicationConstants.ADMIN_ROLE)
+                .requestMatchers("/api/v1/vendor/**").hasAnyRole(ApplicationConstants.ADMIN_ROLE,ApplicationConstants.INSPECTOR_ROLE,
+                		ApplicationConstants.USER_ROLE)
 
-                // plant
-                .requestMatchers(HttpMethod.POST, "/api/v1/plant/save").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.PUT, "/api/v1/plant/edit").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/api/v1/plant/delete/**").hasRole("ADMIN")
-                .requestMatchers("/api/v1/plant/**").hasAnyRole("ADMIN","INSPECTOR","USER")
+                .requestMatchers(HttpMethod.POST, "/api/v1/plant/save").hasRole(ApplicationConstants.ADMIN_ROLE)
+                .requestMatchers(HttpMethod.PUT, "/api/v1/plant/edit").hasRole(ApplicationConstants.ADMIN_ROLE)
+                .requestMatchers(HttpMethod.DELETE, "/api/v1/plant/delete/**").hasRole(ApplicationConstants.ADMIN_ROLE)
+                .requestMatchers("/api/v1/plant/**").hasAnyRole(ApplicationConstants.ADMIN_ROLE,ApplicationConstants.INSPECTOR_ROLE,ApplicationConstants.USER_ROLE)
 
-                // material and material inspection characteristics
-                .requestMatchers(HttpMethod.POST, "/api/v1/material/save").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.PUT, "/api/v1/material/edit").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.DELETE, "/api/v1/material/delete/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.POST, "/api/v1/material/material-char/save").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.PUT, "/api/v1/ch/edit").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/v1/material/save").hasRole(ApplicationConstants.ADMIN_ROLE)
+                .requestMatchers(HttpMethod.PUT, "/api/v1/material/edit").hasRole(ApplicationConstants.ADMIN_ROLE)
+                .requestMatchers(HttpMethod.DELETE, "/api/v1/material/delete/**").hasRole(ApplicationConstants.ADMIN_ROLE)
+                .requestMatchers(HttpMethod.POST, "/api/v1/material/material-char/save").hasRole(ApplicationConstants.ADMIN_ROLE)
+                .requestMatchers(HttpMethod.PUT, "/api/v1/ch/edit").hasRole(ApplicationConstants.ADMIN_ROLE)
 
-                .requestMatchers("/api/v1/material/**").hasAnyRole("ADMIN","INSPECTOR","USER")
+                .requestMatchers("/api/v1/material/**").hasAnyRole(ApplicationConstants.ADMIN_ROLE,ApplicationConstants.INSPECTOR_ROLE,ApplicationConstants.USER_ROLE)
                 
                
 
-                // inspection
-                .requestMatchers(HttpMethod.POST, "api/v1//inspection/create/lot").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.PUT, "/insp/lot/edit").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.POST, "/insp/save/lot/actu").hasRole("INSPECTOR")
-                .requestMatchers(HttpMethod.PUT, "/insp/actu/edit").hasRole("INSPECTOR")
-                .requestMatchers("/api/v1/inspection/**").hasAnyRole("ADMIN","INSPECTOR","USER")
-
-                // admin endpoints
-                .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "api/v1//inspection/create/lot").hasRole(ApplicationConstants.ADMIN_ROLE)
+                .requestMatchers(HttpMethod.PUT, "/insp/lot/edit").hasRole(ApplicationConstants.ADMIN_ROLE)
+                .requestMatchers(HttpMethod.POST, "/insp/save/lot/actu").hasRole(ApplicationConstants.INSPECTOR_ROLE)
+                .requestMatchers(HttpMethod.PUT, "/insp/actu/edit").hasRole(ApplicationConstants.INSPECTOR_ROLE)
+                .requestMatchers("/api/v1/inspection/**").hasAnyRole(ApplicationConstants.ADMIN_ROLE,ApplicationConstants.INSPECTOR_ROLE,ApplicationConstants.USER_ROLE)
+ 
+                .requestMatchers("/api/v1/admin/**").hasRole(ApplicationConstants.ADMIN_ROLE)
 
                 .anyRequest().authenticated()
             )

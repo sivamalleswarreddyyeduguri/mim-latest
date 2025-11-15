@@ -24,7 +24,7 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
     private static final Logger log = LoggerFactory.getLogger(JwtAccessDeniedHandler.class);
  
     @Override
-    public void handle(HttpServletRequest request,
+    public void handle(HttpServletRequest request, 
                        HttpServletResponse response,
                        AccessDeniedException accessDeniedException) throws IOException {
         log.warn("Access denied to {} | Reason: {}", 
@@ -44,6 +44,6 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
         mapper.registerModule(new JavaTimeModule());
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-        mapper.writeValue(response.getOutputStream(), errorResponse);
+        mapper.writeValue(response.getOutputStream(), errorResponse); 
     }
 }

@@ -15,16 +15,16 @@ import com.hcl.mi.services.PlantService;
 import com.hcl.mi.utils.StringUtil;
 
 @Service
-public class PlantServceImpl implements PlantService {
+public class PlantServiceImpl implements PlantService {
 	
 	private final PlantRepository plantRepository;
 	
 
-	public PlantServceImpl(PlantRepository plantReposotory) {
+	public PlantServiceImpl(PlantRepository plantReposotory) {
 		super();
 		this.plantRepository = plantReposotory;
 	}
-	
+	 
 	@Override 
 	public void addNewPlant(PlantDto plantDto) {
 	    Optional<Plant> optPlantId = plantRepository.findById(plantDto.getPlantId().toUpperCase());
@@ -42,14 +42,17 @@ public class PlantServceImpl implements PlantService {
 
 	@Override
 	public List<PlantDto> getAllPlants() {
-		return plantRepository.findAll()
+		 List<PlantDto> list = plantRepository.findAll()
 				.stream()
 				.map(plant-> PlantMapper.convertEntityToDto(plant))
 				.toList();
+		 System.out.println(list);
+		 
+		 return list;
 	} 
- 
-	
-	@Override
+  
+	 
+	@Override 
 	public PlantDto getPlant(String id) {
 	    Optional<Plant> optPlant = plantRepository.findById(id.toUpperCase());
 	    if (optPlant.isEmpty()) {
@@ -58,23 +61,9 @@ public class PlantServceImpl implements PlantService {
 	    return PlantMapper.convertEntityToDto(optPlant.get()); 
 	}
 	
-//	@Override
-//	public void saveEditedPlant(Plant plant) {
-//	    String plantId = StringUtil.removeExtraSpaces(plant.getPlantId()).toUpperCase();
-//	    plant.setPlantId(plantId);
-//
-//	    Optional<Plant> existingPlant = plantRepository.findById(plantId);
-//	    if (existingPlant.isEmpty()) {
-//	        throw new GenericNotFoundException("Plant with ID " + plantId + " does not exist.");
-//	    }
-//
-//	    plant.setPlantName(StringUtil.removeExtraSpaces(plant.getPlantName()).toUpperCase());
-//
-//	    plantRepository.save(plant);
-//	}
 
 	@Override
-	public void saveEditedPlant(Plant plant) {
+	public void saveEditedPlant(PlantDto plant) {
 	    String plantId = StringUtil.removeExtraSpaces(plant.getPlantId()).toUpperCase();
 
 	    Plant existingPlant = plantRepository.findById(plantId)

@@ -1,7 +1,6 @@
 package com.hcl.mi.servicesImpl;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -22,7 +21,7 @@ public class VendorServiceImpl implements VendorService {
 		this.vendorRepository = vendorRepository;
 	}
 
-	
+	  
 	@Override
 	public void addNewVendor(VendorDto vendorDto) {
 	    String name = StringUtil.removeExtraSpaces(vendorDto.getName()).toUpperCase();

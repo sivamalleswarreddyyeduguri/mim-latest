@@ -9,7 +9,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class MaterialCharDto {
+public class MaterialCharDto {  
 	 
 	private Integer characteristicId;
 

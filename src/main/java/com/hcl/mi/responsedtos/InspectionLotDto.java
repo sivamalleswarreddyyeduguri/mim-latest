@@ -22,3 +22,4 @@ public class InspectionLotDto {
 	private String userName;
 
 }
+ 

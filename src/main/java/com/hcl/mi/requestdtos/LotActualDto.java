@@ -18,4 +18,4 @@ public class LotActualDto {
 	@NotNull(message = "invalid lower tolerance limit")
 	private double minMeas;
 }
- 
+  

@@ -37,7 +37,6 @@ public class InspectionActuals extends BaseEntity{
 
 	public InspectionActuals() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public InspectionActuals(Integer actualId, InspectionLot inspectionLot,
@@ -51,7 +50,7 @@ public class InspectionActuals extends BaseEntity{
 		this.minimumMeasurement = minimumMeasurement;
 		
 	}
-	
+	 
 	
 
 }

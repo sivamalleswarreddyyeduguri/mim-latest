@@ -1,7 +1,6 @@
 package com.hcl.mi.controllers;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,14 +10,14 @@ import com.hcl.mi.responsedtos.ResponseDto;
 import com.hcl.mi.services.UserService;
 
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/api/v1/admin")
+@Slf4j
 public class AdminController {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AdminController.class);
-
-    private final UserService userService;
+    private final UserService userService; 
 
     public AdminController(UserService userService) {
         this.userService = userService;
@@ -26,25 +25,31 @@ public class AdminController {
 
     @PostMapping("/create-inspector")
     public ResponseEntity<ResponseDto> createInspector(@Valid @RequestBody NewUser newUser) {
-    	
-    	System.out.println(newUser + "--------------------------------------");
-    	
+    	    	
         newUser.setRole("INSPECTOR");
         userService.saveUser(newUser);
         
-            LOG.info("Inspector created: {}", newUser.getUsername());
+            log.info("Inspector created: {}", newUser.getUsername());
             return ResponseEntity.status(HttpStatus.CREATED)
             		.body(new ResponseDto("201", "registration successfull"));  
         
     }
+    
+    @PutMapping("/update/{id}")
+	public ResponseEntity<ResponseDto> updateUser(@PathVariable Integer id, @RequestBody NewUser newUser ) {
+				 		
+		userService.updateUser(id, newUser);
+		return ResponseEntity.ok(new ResponseDto("200", "user updated successfully"));
+	}
+	
+	@DeleteMapping("/delete/{id}")
+	public ResponseEntity<ResponseDto> deleteVendor(@PathVariable Integer id) {
+		
+		log.info("inside deleteVendor():");
 
-    @PostMapping("/create-user")
-    public ResponseEntity<?> createUser(@Valid @RequestBody NewUser newUser) {
-        newUser.setRole("USER");
-       userService.saveUser(newUser);
-        
-            LOG.info("User created by admin: {}", newUser.getUsername());
-            return ResponseEntity.status(HttpStatus.CREATED).build();
-        
-    }
+		userService.deleteVendor(id);
+		return  ResponseEntity
+				.status(HttpStatus.OK)
+				.body(new ResponseDto("200", "vendor deleted successfully"));
+	}
 }

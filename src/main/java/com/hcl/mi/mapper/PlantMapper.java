@@ -18,7 +18,7 @@ public class PlantMapper {
         dto.setCity(plant.getCity());
         dto.setState(plant.getState());  
         return dto;
-    }
+    } 
 
     public static Plant convertDtoToEntity(PlantDto plantDto) {
 

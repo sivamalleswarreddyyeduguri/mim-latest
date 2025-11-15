@@ -1,8 +1,6 @@
 package com.hcl.mi.controllers;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,17 +18,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.hcl.mi.entities.Material;
-import com.hcl.mi.entities.MaterialInspectionCharacteristics;
+import com.hcl.mi.requestdtos.ErrorResponseDto;
 import com.hcl.mi.requestdtos.MaterialCharDto;
 import com.hcl.mi.requestdtos.MaterialCharUpdateDto;
 import com.hcl.mi.responsedtos.MaterialDto;
 import com.hcl.mi.responsedtos.MaterialInspectionCharacteristicsDto;
 import com.hcl.mi.responsedtos.ResponseDto;
-import com.hcl.mi.responsedtos.VendorDto;
 import com.hcl.mi.services.MaterialService;
-import com.hcl.mi.utils.ApplicationConstants;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -38,23 +40,27 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/api/v1/material")
 @Tag(name = "Material Controller", description = "responsible for adding material related data")
+@OpenAPIDefinition(info = @Info(title = "APIs", version = "1.0", description = "Documentation APIs v2.0"))
 @Slf4j
 public class MaterialController {
 
 	private MaterialService materialService;
 
-	private Logger LOG = LoggerFactory.getLogger(MaterialController.class);
-
 	public MaterialController(MaterialService materialService) {
 
 		this.materialService = materialService; 
 
-	}
+	}  
  
+	@Operation(summary = "Save Material") 
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Save Material", content = {@Content(schema = @Schema(implementation = ResponseDto.class))}),
+            @ApiResponse(responseCode = "400", description = "BAD Request", content = {@Content(schema = @Schema(implementation = ErrorResponseDto.class))}),
+            @ApiResponse(responseCode = "404", description = "Data not Found", content = {@Content(schema = @Schema(implementation = ErrorResponseDto.class))}),
+            @ApiResponse(responseCode = "500", description = "Server not responded", content = {@Content(schema = @Schema(implementation = ErrorResponseDto.class))})})
 	@PostMapping("/save")
 	public ResponseEntity<ResponseDto> addNewMaterial(@Valid @RequestBody MaterialDto materialDto) {
 
-		LOG.info("new material saving {}", materialDto);
+		log.info("new material saving {}", materialDto);
 		
 		materialService.addNewMaterial(materialDto);
 			
@@ -64,18 +70,28 @@ public class MaterialController {
 
 	}
 
+	@Operation(summary = "Get ALl Materials")
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Get ALl Materials", content = {@Content(schema = @Schema(implementation = MaterialDto.class))}),
+            @ApiResponse(responseCode = "400", description = "BAD Request", content = {@Content(schema = @Schema(implementation = ErrorResponseDto.class))}),
+            @ApiResponse(responseCode = "404", description = "Data not Found", content = {@Content(schema = @Schema(implementation = ErrorResponseDto.class))}),
+            @ApiResponse(responseCode = "500", description = "Server not responded", content = {@Content(schema = @Schema(implementation = ErrorResponseDto.class))})})
 	@GetMapping("/get-all") 
 	public ResponseEntity<List<MaterialDto>> getAllMaterials() {   
 
-		LOG.info("calling material service for all material list");
+		log.info("calling material service for all material list");
 
 		List<MaterialDto> materialsList = materialService.getAllMaterials(); 
 
-		LOG.info("returing all active material list to view");
+		log.info("returing all active material list to view");
 		
 		return ResponseEntity.status(HttpStatus.OK).body(materialsList);  
 	}
 
+	@Operation(summary = "Get Material by ID")
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Get Material by ID", content = {@Content(schema = @Schema(implementation = MaterialDto.class))}),
+            @ApiResponse(responseCode = "400", description = "BAD Request", content = {@Content(schema = @Schema(implementation = ErrorResponseDto.class))}),
+            @ApiResponse(responseCode = "404", description = "Data not Found", content = {@Content(schema = @Schema(implementation = ErrorResponseDto.class))}),
+            @ApiResponse(responseCode = "500", description = "Server not responded", content = {@Content(schema = @Schema(implementation = ErrorResponseDto.class))})})
 	@GetMapping("/{id}")
 	public ResponseEntity<MaterialDto> getMaterial(@PathVariable String id) {
 
@@ -85,10 +101,15 @@ public class MaterialController {
  
 	} 
 
+	@Operation(summary = "Update Material")
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Update Material", content = {@Content(schema = @Schema(implementation = ResponseDto.class))}),
+            @ApiResponse(responseCode = "400", description = "BAD Request", content = {@Content(schema = @Schema(implementation = ErrorResponseDto.class))}),
+            @ApiResponse(responseCode = "404", description = "Data not Found", content = {@Content(schema = @Schema(implementation = ErrorResponseDto.class))}),
+            @ApiResponse(responseCode = "500", description = "Server not responded", content = {@Content(schema = @Schema(implementation = ErrorResponseDto.class))})})
 	@PutMapping("/edit")
 	public ResponseEntity<ResponseDto> editMaterialSave(@Valid @RequestBody MaterialDto materialDto) {
 
-		LOG.info("material updation saving {}", materialDto);
+		log.info("material updation saving {}", materialDto);
 
 		materialService.saveEditMaterial(materialDto);
 
@@ -96,6 +117,11 @@ public class MaterialController {
 
 	}
 	
+	@Operation(summary = "Delete Material")
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Delete Material", content = {@Content(schema = @Schema(implementation = ResponseDto.class))}),
+            @ApiResponse(responseCode = "400", description = "BAD Request", content = {@Content(schema = @Schema(implementation = ErrorResponseDto.class))}),
+            @ApiResponse(responseCode = "404", description = "Data not Found", content = {@Content(schema = @Schema(implementation = ErrorResponseDto.class))}),
+            @ApiResponse(responseCode = "500", description = "Server not responded", content = {@Content(schema = @Schema(implementation = ErrorResponseDto.class))})})
 	@DeleteMapping("/delete/{materialId}")
 	public ResponseEntity<ResponseDto> deleteVendor(@PathVariable String materialId) {
 
@@ -106,26 +132,32 @@ public class MaterialController {
 		 
 	}
 	
-/* 
- * material characteristics section
- * 
- */
+	@Operation(summary = "View Material Characteristics")
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "View Material Characteristicsl", content = {@Content(schema = @Schema(implementation = MaterialInspectionCharacteristicsDto.class))}),
+            @ApiResponse(responseCode = "400", description = "BAD Request", content = {@Content(schema = @Schema(implementation = ErrorResponseDto.class))}),
+            @ApiResponse(responseCode = "404", description = "Data not Found", content = {@Content(schema = @Schema(implementation = ErrorResponseDto.class))}),
+            @ApiResponse(responseCode = "500", description = "Server not responded", content = {@Content(schema = @Schema(implementation = ErrorResponseDto.class))})})
 	@GetMapping("/view/char")
 	public ResponseEntity<List<MaterialInspectionCharacteristicsDto>> viewCharacteristics(@RequestParam String materialId) {
 
-		LOG.info("calling material service for material characteristics if material id : {}", materialId);
+		log.info("calling material service for material characteristics if material id : {}", materialId);
 		List<MaterialInspectionCharacteristicsDto> list = materialService.getAllCharacteristicsOfMaterial(materialId);
-				LOG.info("returning characteristics list of material id, {}", materialId);
+				log.info("returning characteristics list of material id, {}", materialId);
 
 		return ResponseEntity.status(HttpStatus.OK).body(list);      
 	} 
  
 	  
   
+	@Operation(summary = "Save Material Characteristics")
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Save Material Characteristicsl", content = {@Content(schema = @Schema(implementation = ResponseDto.class))}),
+            @ApiResponse(responseCode = "400", description = "BAD Request", content = {@Content(schema = @Schema(implementation = ErrorResponseDto.class))}),
+            @ApiResponse(responseCode = "404", description = "Data not Found", content = {@Content(schema = @Schema(implementation = ErrorResponseDto.class))}),
+            @ApiResponse(responseCode = "500", description = "Server not responded", content = {@Content(schema = @Schema(implementation = ErrorResponseDto.class))})})
 	@PostMapping("/material-char/save")
 	public ResponseEntity<ResponseDto> addMaterialCharacteristics(@Valid @RequestBody MaterialCharDto matChar) {
 
-		LOG.info("new material characteristics adding for material id : {}", matChar.getMatId());
+		log.info("new material characteristics adding for material id : {}", matChar.getMatId());
 
 		materialService.addNewMaterialCharacteristic(matChar);
 
@@ -134,6 +166,11 @@ public class MaterialController {
 	}
 	
 	
+	@Operation(summary = "Get Material Characteristics by ID")
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Get Material Characteristics by ID", content = {@Content(schema = @Schema(implementation = MaterialInspectionCharacteristicsDto.class))}),
+            @ApiResponse(responseCode = "400", description = "BAD Request", content = {@Content(schema = @Schema(implementation = ErrorResponseDto.class))}),
+            @ApiResponse(responseCode = "404", description = "Data not Found", content = {@Content(schema = @Schema(implementation = ErrorResponseDto.class))}),
+            @ApiResponse(responseCode = "500", description = "Server not responded", content = {@Content(schema = @Schema(implementation = ErrorResponseDto.class))})})
 	@GetMapping("/ch/{id}")
 	public ResponseEntity<MaterialInspectionCharacteristicsDto> getCharacteristicsByChId(@PathVariable Integer id) {
 
@@ -143,26 +180,30 @@ public class MaterialController {
   
 	}  
  
+	@Operation(summary = "Get Material Characteristics by Lot ID")
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Get Material Characteristics by Lot ID", content = {@Content(schema = @Schema(implementation = MaterialInspectionCharacteristicsDto.class))}),
+            @ApiResponse(responseCode = "400", description = "BAD Request", content = {@Content(schema = @Schema(implementation = ErrorResponseDto.class))}),
+            @ApiResponse(responseCode = "404", description = "Data not Found", content = {@Content(schema = @Schema(implementation = ErrorResponseDto.class))}),
+            @ApiResponse(responseCode = "500", description = "Server not responded", content = {@Content(schema = @Schema(implementation = ErrorResponseDto.class))})})
 	@GetMapping("/rem/char/lot")
-	public ResponseEntity<?> getLotCurrentCharacteristicsOfAssociatedMaterial(@RequestParam Integer id) {
+	public ResponseEntity<List<MaterialInspectionCharacteristicsDto>> getLotCurrentCharacteristicsOfAssociatedMaterial(@RequestParam Integer id) {
 		
 		List<MaterialInspectionCharacteristicsDto> characteristicsList = materialService.getMaterialCharByLotId(id);
 		
-		Map<String, Object> response = new HashMap<>(); 
-		response.put(ApplicationConstants.MSG, ApplicationConstants.SUCCESS_MSG);
-		if(characteristicsList.size() == 0) {
-			response.put("info", "all characteristics are inspected");
-		}else {
-			response.put(ApplicationConstants.DATA, characteristicsList);
-		}
 		
-		LOG.info("returing lot inspection characteristics needs to be added");
+		
+		log.info("returing lot inspection characteristics needs to be added");
 
-		return ResponseEntity.status(HttpStatus.OK).body(response);    
+		return ResponseEntity.status(HttpStatus.OK).body(characteristicsList);    
 
 	} 
 	
 	
+	@Operation(summary = "Edit Material Characteristics")
+    @ApiResponses({@ApiResponse(responseCode = "200", description = "Edit Material Characteristics", content = {@Content(schema = @Schema(implementation = ResponseDto.class))}),
+            @ApiResponse(responseCode = "400", description = "BAD Request", content = {@Content(schema = @Schema(implementation = ErrorResponseDto.class))}),
+            @ApiResponse(responseCode = "404", description = "Data not Found", content = {@Content(schema = @Schema(implementation = ErrorResponseDto.class))}),
+            @ApiResponse(responseCode = "500", description = "Server not responded", content = {@Content(schema = @Schema(implementation = ErrorResponseDto.class))})})
 	@PutMapping("/material-char/edit")  
 	public ResponseEntity<ResponseDto> updateCharcteristics(@Valid @RequestBody MaterialCharUpdateDto charDto) {
 		log.info("inside editVendor(): {}", charDto);
@@ -172,21 +213,32 @@ public class MaterialController {
 				.body(new ResponseDto("200", "characteristics details updated Successfully"));
 	} 
 	
-	
 	@PostMapping(value = "/char/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<?> addMaterialCharacteristics(@RequestParam("file") MultipartFile file) throws Exception{
+	public ResponseEntity<ResponseDto> addMaterialCharacteristics(@RequestParam("file") MultipartFile file) throws Exception{
+		 
+		log.info("inside upload(): ");
+	    materialService.addListOfCharacteristicsForMaterial(file);
 		
-		Map<String, Object> response = new HashMap<>();
 		
-		boolean isCharacteristicsAdded = materialService.addListOfCharacteristicsForMaterial(file);
-		
-		if(isCharacteristicsAdded) {
-			response.put(ApplicationConstants.MSG, ApplicationConstants.SUCCESS_MSG);
-		}else {
-			response.put(ApplicationConstants.MSG, ApplicationConstants.FAIL_MSG);
-		}
-		
-		return new ResponseEntity<>(response, HttpStatus.CREATED);
+	    return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDto("201", "Charactersitics Uploaded successfully"));     
 	}
+	 
+	@DeleteMapping("/delete/char/{charId}")
+	public ResponseEntity<ResponseDto> deleteMaterialCharacteristics(@PathVariable Integer charId) {
+		
+		materialService.deleteMaterialCharacteristics(charId);
+		return  ResponseEntity
+				.status(HttpStatus.OK)
+				.body(new ResponseDto("200", "Characteristics deleted successfully"));
+	}
+	
+	@GetMapping("/get-all-char") 
+	public ResponseEntity<List<MaterialInspectionCharacteristicsDto>> getAllCharacteristics() {
 
-}
+		log.info("calling material service for material characteristics if material id : {}");
+		List<MaterialInspectionCharacteristicsDto> list = materialService.getAllCharacteristics();
+
+		return ResponseEntity.status(HttpStatus.OK).body(list);      
+	} 
+ 
+} 

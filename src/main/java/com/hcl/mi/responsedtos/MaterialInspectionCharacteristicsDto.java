@@ -1,22 +1,3 @@
-//package com.hcl.mi.responsedtos;
-//
-//import lombok.Data;
-//
-//@Data
-//public class MaterialInspectionCharacteristicsDto {
-//	
-//	private Integer characteristicId;
-//	 
-//	private String characteristicDescription;
-//	
-//	private Double upperToleranceLimit;
-//	
-//	private Double lowerToleranceLimit;
-//	
-//	private String unitOfMeasure;
-//}
-
-
 package com.hcl.mi.responsedtos;
 
 import jakarta.validation.constraints.NotNull;
@@ -28,7 +9,7 @@ import lombok.Data;
 @Data
 public class MaterialInspectionCharacteristicsDto {
 
-    private Integer characteristicId;
+    private Integer characteristicId; 
 
     @NotNull(message = "Characteristic description must not be null")
     @Size(min = 1, message = "Characteristic description must not be empty")
@@ -42,9 +23,9 @@ public class MaterialInspectionCharacteristicsDto {
     @PositiveOrZero(message = "Lower tolerance limit must be zero or positive")
     private Double lowerToleranceLimit;
 
-    private String unitOfMeasure;
+    private String unitOfMeasure; 
     
-    private String matId;
+    private String matId; 
 
     @AssertTrue(message = "Lower tolerance limit must be less than or equal to upper tolerance limit")
     public boolean isToleranceRangeValid() {

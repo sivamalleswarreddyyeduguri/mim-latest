@@ -14,6 +14,7 @@ import com.hcl.mi.repositories.UserRepository;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
+import lombok.extern.slf4j.Slf4j;
 
 @SpringBootApplication
 @EnableTransactionManagement
@@ -22,13 +23,14 @@ import io.swagger.v3.oas.annotations.info.Info;
                                 description = "Capturing Inspection Actuals details.",
                                 contact = @Contact(name = "Siva", 
                                 email = "siva@hcltech.com")))
+@Slf4j
 public class MaterialInspectionRestApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(MaterialInspectionRestApplication.class, args);
-    }
+    } 
 
-    @Bean
+    @Bean  
     CommandLineRunner initDefaultAdmin(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         return args -> {
             String adminUsername = "admin";
@@ -39,10 +41,11 @@ public class MaterialInspectionRestApplication {
                         .email("admin@hcltech.com")
                         .mobileNum("8639054306")
                         .role("ADMIN")
+                        .status("Active") 
                         .build();
                 userRepository.save(admin);
-                System.out.println("Default admin created -> username: admin / password: Admin@123");
+                log.info("Default admin created -> username: admin / password: Admin@123");
             }
-        };
+        }; 
     }
 }

@@ -16,7 +16,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.Singular;
 
 @Entity
 @Getter
@@ -32,8 +31,8 @@ public class InspectionLot extends BaseEntity{
 	
 	private LocalDate creationDate;
 	
-	private LocalDate inspectionStartDate;
-
+	private LocalDate inspectionStartDate; 
+ 
 	private LocalDate inspectionEndDate;
 
 	private String result;
@@ -65,24 +64,6 @@ public class InspectionLot extends BaseEntity{
 
 	public InspectionLot() {
 		super();
-		// TODO Auto-generated constructor stub
-	}
-
-	public InspectionLot(Integer lotId, LocalDate creationDate, LocalDate inspectionStartDate,
-			LocalDate inspectionEndDate, String result, String remarks, List<InspectionActuals> inspectionActuals,
-			Material material, Vendor vendor, Plant plant, User user, String username) {
-		super();
-		this.lotId = lotId;
-		this.creationDate = creationDate;
-		this.inspectionStartDate = inspectionStartDate;
-		this.inspectionEndDate = inspectionEndDate;
-		this.result = result;
-		this.remarks = remarks;
-		this.inspectionActuals = inspectionActuals;
-		this.material = material;
-		this.vendor = vendor;
-		this.plant = plant;
-
 	}
 	
 }

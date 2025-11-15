@@ -10,7 +10,6 @@ import jakarta.validation.ConstraintValidatorContext;
 
 public class PasswordValidator implements ConstraintValidator<StrongPassword, String> {
 	
-//	private static String REG_EXP = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!*()]).{8,}$";
 	
 	@Value("${password-validation}")
 	private String REG_EXP;

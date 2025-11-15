@@ -10,4 +10,4 @@ class MaterialInspectionRestApplicationTests {
 	void contextLoads() {
 	}
 
-}
+} 
