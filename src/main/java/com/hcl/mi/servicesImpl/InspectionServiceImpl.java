@@ -142,7 +142,10 @@ public class InspectionServiceImpl implements InspectionService {
 
 					.lowerToleranceLimit(characteristics.get(start).getLowerToleranceLimit())
 
-					.unitOfMeasure(characteristics.get(start).getUnitOfMeasure()).build();
+					.unitOfMeasure(characteristics.get(start).getUnitOfMeasure())
+					.materialDes(material.getMaterialDesc())
+
+					.build();
 
 			list.add(lotActOrg);
 		}
